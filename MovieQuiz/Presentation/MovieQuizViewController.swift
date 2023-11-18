@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController {
+final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     //MARK: - Outlets
     @IBOutlet private weak var noButton: UIButton!
     @IBOutlet private weak var yesButton: UIButton!
@@ -14,20 +14,29 @@ final class MovieQuizViewController: UIViewController {
     //MARK: - Private properties
     private var currentQuestionIndex: Int = .zero
     private var correctAnswers: Int = .zero
-   
     private let questionsAmount: Int = 10
-    private var questionFactory: QuestionFactory = QuestionFactory()
+    private let questionFactory = QuestionFactory()
     private var currentQuestion: QuizQuestion?
+    private lazy var alertPresenter: AlertPresenterDelegate = AlertPresenter(view: self)
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
-        if let firstQuestion = questionFactory.requestNextQuestion() {
-            currentQuestion = firstQuestion
-            show(quiz: convert(model: firstQuestion))
-        }
+        questionFactory.delegate = self
+        questionFactory.requestNextQuestion()
         super.viewDidLoad()
     }
-    
+    // MARK: - QuestionFactoryDelegate
+    func didReceiveNextQuestion(question: QuizQuestion?) {
+        guard let question = question else {
+            return
+        }
+        
+        currentQuestion = question
+        let viewModel = convert(model: question)
+        DispatchQueue.main.async { [weak self] in
+            self?.show(quiz: viewModel)
+        }
+    }
     //MARK: - Actions
     @IBAction private func yesButtonClicked(_ sender: Any) {
         guard let currentQuestion = currentQuestion else {
@@ -66,7 +75,7 @@ final class MovieQuizViewController: UIViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             
             guard let self else {return}
-            showNextQuestionOrResults()
+            self.showNextQuestionOrResults()
         }
     }
     
@@ -77,38 +86,25 @@ final class MovieQuizViewController: UIViewController {
         imageView.layer.borderWidth = .zero
     }
     
-    private func show(quiz result: QuizResultsViewModel) {
-        let alert = UIAlertController(title: result.title,
-                                      message: result.text,
-                                      preferredStyle: .alert)
-        let action = UIAlertAction(title: result.buttonText,style: .default) { [weak self] _ in
-            
-            guard let self else {return}
-            currentQuestionIndex = .zero
-            correctAnswers = .zero
-            if let firstQuestion = questionFactory.requestNextQuestion() {
-                currentQuestion = firstQuestion
-                show(quiz: convert(model: firstQuestion))
-            }
-        }
-        alert.addAction(action)
-        self.present(alert, animated: true, completion: nil)
-    }
-    
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
-            let text = correctAnswers == questionsAmount ?  
+            let text = correctAnswers == questionsAmount ?
             "Поздравляем, вы ответили на 10 из 10!" :
             "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
-           show(quiz: QuizResultsViewModel(title: "Раунд окончен!",
-                                           text: "Ваш результат: \(correctAnswers)/10",
-                                           buttonText: "Сыграть ещё раз"))
+            
+            alertPresenter.presentAlert(alertModel: AlertModel(title: "Раунд окончен!",
+                                                               message: text,
+                                                               buttonText: "Сыграть ещё раз", 
+                                                               completion: {
+                [weak self] in
+                guard let self else { return }
+                self.currentQuestionIndex = 0
+                self.correctAnswers = 0
+                self.questionFactory.requestNextQuestion()
+            }))
         } else {
             currentQuestionIndex += 1
-            if let nextQuestion = questionFactory.requestNextQuestion() {
-                currentQuestion = nextQuestion
-                show(quiz: convert(model: nextQuestion))
-            }
+            self.questionFactory.requestNextQuestion()
         }
         noButton.isEnabled.toggle()
         yesButton.isEnabled.toggle()
