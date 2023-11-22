@@ -18,6 +18,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private let questionFactory = QuestionFactory()
     private var currentQuestion: QuizQuestion?
     private lazy var alertPresenter: AlertPresenterDelegate = AlertPresenter(view: self)
+    private var statisticService: StatisticService = StatisticServiceImplementation()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -86,22 +87,35 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         imageView.layer.borderWidth = .zero
     }
     
+    private func showAlert(quiz: QuizResultsViewModel){
+        alertPresenter.presentAlert(alertModel: AlertModel(title:quiz.title,
+                                                           message: quiz.text,
+                                                           buttonText: quiz.buttonText,
+                                                           completion: {
+            [weak self] in
+            guard let self else { return }
+            self.currentQuestionIndex = 0
+            self.correctAnswers = 0
+            self.questionFactory.requestNextQuestion()
+        }))
+    }
+    
+    private func generateResultText() -> String {
+        let accuracy = String(format: "%.2f", statisticService.totalAccuracy)
+        let totalPlaysCountLine = "Количество сыгранных квизов: \(statisticService.gamesCount)"
+        let currentGameResultLine = "Ваш результат: \(correctAnswers)\\\(questionsAmount)"
+        let recordText = statisticService.bestGame.textRecord
+        let averageAccuracyLine = "Средняя точность: \(accuracy)"
+        let message = [currentGameResultLine,totalPlaysCountLine,recordText, averageAccuracyLine].joined(separator: "\n")
+        return message
+    }
+    
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
-            let text = correctAnswers == questionsAmount ?
-            "Поздравляем, вы ответили на 10 из 10!" :
-            "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
-            
-            alertPresenter.presentAlert(alertModel: AlertModel(title: "Раунд окончен!",
-                                                               message: text,
-                                                               buttonText: "Сыграть ещё раз", 
-                                                               completion: {
-                [weak self] in
-                guard let self else { return }
-                self.currentQuestionIndex = 0
-                self.correctAnswers = 0
-                self.questionFactory.requestNextQuestion()
-            }))
+            statisticService.store(correct: correctAnswers, total: questionsAmount)
+            showAlert(quiz: QuizResultsViewModel(title: "Этот раунд окончен!",
+                                                 text: generateResultText(),
+                                                 buttonText: "Сыграть ещё раз"))
         } else {
             currentQuestionIndex += 1
             self.questionFactory.requestNextQuestion()

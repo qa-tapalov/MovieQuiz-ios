@@ -20,10 +20,11 @@ final class AlertPresenter: AlertPresenterDelegate {
     }
     
     func presentAlert(alertModel: AlertModel) {
-        let alertController = UIAlertController(title: alertModel.title, 
+        let alertController = UIAlertController(title: alertModel.title,
                                                 message: alertModel.message,
                                                 preferredStyle: .alert)
-        let action = UIAlertAction(title: alertModel.buttonText, 
+        
+        let action = UIAlertAction(title: alertModel.buttonText,
                                    style: .default) { _ in
             alertModel.completion()
         }
