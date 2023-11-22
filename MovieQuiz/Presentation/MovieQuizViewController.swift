@@ -105,7 +105,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         let totalPlaysCountLine = "Количество сыгранных квизов: \(statisticService.gamesCount)"
         let currentGameResultLine = "Ваш результат: \(correctAnswers)\\\(questionsAmount)"
         let recordText = statisticService.bestGame.textRecord
-        let averageAccuracyLine = "Средняя точность: \(accuracy)"
+        let averageAccuracyLine = "Средняя точность: \(accuracy)%"
         let message = [currentGameResultLine,totalPlaysCountLine,recordText, averageAccuracyLine].joined(separator: "\n")
         return message
     }
