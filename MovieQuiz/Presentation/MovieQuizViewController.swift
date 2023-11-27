@@ -10,21 +10,23 @@ final class MovieQuizViewController: UIViewController,
     
     @IBOutlet private weak var textLabel: UILabel!
     @IBOutlet private weak var counterLabel: UILabel!
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     
     
     //MARK: - Private properties
     private var currentQuestionIndex: Int = .zero
     private var correctAnswers: Int = .zero
     private let questionsAmount: Int = 10
-    private let questionFactory = QuestionFactory()
+    private var questionFactory: QuestionFactory?
     private var currentQuestion: QuizQuestion?
     private lazy var alertPresenter: AlertPresenterDelegate = AlertPresenter(view: self)
     private var statisticService: StatisticService = StatisticServiceImplementation()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
-        questionFactory.delegate = self
-        questionFactory.requestNextQuestion()
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+        showLoadingIndicator()
+        questionFactory?.loadData()
         super.viewDidLoad()
     }
     // MARK: - QuestionFactoryDelegate
@@ -58,7 +60,7 @@ final class MovieQuizViewController: UIViewController,
     //MARK: - Private Methods
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         return QuizStepViewModel(
-            image: UIImage(named: model.image) ?? UIImage(),
+            image: UIImage(data: model.image) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
     }
@@ -97,7 +99,7 @@ final class MovieQuizViewController: UIViewController,
             guard let self else { return }
             self.currentQuestionIndex = 0
             self.correctAnswers = 0
-            self.questionFactory.requestNextQuestion()
+            self.questionFactory?.requestNextQuestion()
         }))
     }
     
@@ -119,9 +121,45 @@ final class MovieQuizViewController: UIViewController,
                                                  buttonText: "Сыграть ещё раз"))
         } else {
             currentQuestionIndex += 1
-            self.questionFactory.requestNextQuestion()
+            self.questionFactory?.requestNextQuestion()
         }
         noButton.isEnabled.toggle()
         yesButton.isEnabled.toggle()
+    }
+    
+    
+}
+
+extension MovieQuizViewController {
+    
+    func didLoadDataFromServer() {
+        hideLoadingIndicator()
+        questionFactory?.requestNextQuestion()
+    }
+    
+    func didFailToLoadData(with error: Error) {
+        showNetworkError(message: error.localizedDescription)
+    }
+    
+    private func showLoadingIndicator() {
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+    }
+    
+    private func hideLoadingIndicator() {
+        activityIndicator.isHidden = true
+        activityIndicator.stopAnimating()
+    }
+    
+    private func showNetworkError(message: String) {
+        hideLoadingIndicator() // скрываем индикатор загрузки
+        
+        alertPresenter.presentAlert(alertModel: AlertModel(title: "Ошибка", message: "Не удалось загрузить данные", buttonText: "Попробовать ещё раз", completion: {
+            [weak self] in
+            guard let self else { return }
+            self.currentQuestionIndex = 0
+            self.correctAnswers = 0
+            self.questionFactory?.loadData()
+        }))
     }
 }
