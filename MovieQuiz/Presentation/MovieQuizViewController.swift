@@ -10,6 +10,7 @@ final class MovieQuizViewController: UIViewController,
     
     @IBOutlet private weak var textLabel: UILabel!
     @IBOutlet private weak var counterLabel: UILabel!
+    
     @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     
     
@@ -152,9 +153,11 @@ extension MovieQuizViewController {
     }
     
     private func showNetworkError(message: String) {
-        hideLoadingIndicator() // скрываем индикатор загрузки
-        
-        alertPresenter.presentAlert(alertModel: AlertModel(title: "Ошибка", message: "Не удалось загрузить данные", buttonText: "Попробовать ещё раз", completion: {
+        hideLoadingIndicator()
+        alertPresenter.presentAlert(alertModel: AlertModel(title: "Ошибка",
+                                                           message: "Не удалось загрузить данные",
+                                                           buttonText: "Попробовать ещё раз",
+                                                           completion: {
             [weak self] in
             guard let self else { return }
             self.currentQuestionIndex = 0
