@@ -128,7 +128,6 @@ final class MovieQuizViewController: UIViewController,
         yesButton.isEnabled.toggle()
     }
     
-    
 }
 
 extension MovieQuizViewController {
