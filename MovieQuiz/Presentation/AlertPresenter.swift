@@ -20,6 +20,7 @@ final class AlertPresenter: AlertPresenterDelegate {
     }
     
     func presentAlert(alertModel: AlertModel) {
+        
         let alertController = UIAlertController(title: alertModel.title,
                                                 message: alertModel.message,
                                                 preferredStyle: .alert)
