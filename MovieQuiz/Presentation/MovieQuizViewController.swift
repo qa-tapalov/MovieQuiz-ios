@@ -35,7 +35,6 @@ final class MovieQuizViewController: UIViewController,
     }
     
     //MARK: - Methods
-    
     func highlightImageBorder(isCorrectAnswer: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8

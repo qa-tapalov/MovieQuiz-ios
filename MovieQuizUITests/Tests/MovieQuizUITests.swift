@@ -56,6 +56,7 @@ class MovieQuizUITests: BaseClass {
         
         uiElements.alertButton.tap()
         _ = uiElements.indexLabel.waitForExistence(timeout: 3)
+        XCTAssertFalse(uiElements.alert.exists)
         XCTAssertEqual(uiElements.indexLabel.label, "1/10")
 
     }

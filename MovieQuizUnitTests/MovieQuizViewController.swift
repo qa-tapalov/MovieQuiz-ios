@@ -37,7 +37,6 @@ final class MovieQuizViewControllerMock: MovieQuiz.MovieQuizViewControllerProtoc
         
     }
     
-    
 }
 
 final class MovieQuizPresenterTests: XCTestCase {

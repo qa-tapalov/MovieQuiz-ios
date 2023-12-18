@@ -113,8 +113,8 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
     
     func restartGame() {
-        currentQuestionIndex = 0
-        correctAnswers = 0
+        currentQuestionIndex = .zero
+        correctAnswers = .zero
         questionFactory?.requestNextQuestion()
     }
     
