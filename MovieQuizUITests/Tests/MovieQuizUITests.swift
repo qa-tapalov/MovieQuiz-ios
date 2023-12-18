@@ -7,34 +7,8 @@
 
 import XCTest
 
-//MARK: - Base
-class BaseClass: XCTestCase {
-    let app = XCUIApplication()
-    override func setUpWithError() throws {
-        app.launch()
-        continueAfterFailure = false
-    }
-    
-    override func tearDownWithError() throws {
-        app.terminate()
-    }
-}
-//MARK: - Elements
-class UIElements: BaseClass {
-    
-    var indexLabel: XCUIElement {app.staticTexts["Index"]}
-    var firstPoster: XCUIElement { app.images["Poster"]}
-    var secondPoster: XCUIElement {app.images["Poster"]}
-    var buttonYes: XCUIElement {app.buttons["Yes"]}
-    var buttonNo: XCUIElement {app.buttons["No"]}
-    var alert: XCUIElement {app.alerts.firstMatch}
-    var alertTitle: XCUIElement {app.alerts.firstMatch.staticTexts["Этот раунд окончен!"]}
-    var alertButton: XCUIElement {app.alerts.buttons["Сыграть ещё раз"]}
-}
-
-
 //MARK: - Tests
-class MovieQuizUITests {
+class MovieQuizUITests: BaseClass {
     let uiElements = UIElements()
     
     func testYesButton() throws {
@@ -67,11 +41,23 @@ class MovieQuizUITests {
             sleep(3)
         }
         
-        XCTAssertEqual(uiElements.alert.waitForExistence(timeout: 3), true)
+        XCTAssertTrue(uiElements.alert.exists)
         XCTAssertEqual(uiElements.alertTitle.label, "Этот раунд окончен!")
         XCTAssertEqual(uiElements.alertButton.label, "Сыграть ещё раз")
         
     }
     
+    func testAlertButtonPlayAgain() throws {
+        _ = uiElements.buttonYes.waitForExistence(timeout: 3)
+        for _ in 0...9 {
+            uiElements.buttonYes.tap()
+            sleep(3)
+        }
+        
+        uiElements.alertButton.tap()
+        _ = uiElements.indexLabel.waitForExistence(timeout: 3)
+        XCTAssertEqual(uiElements.indexLabel.label, "1/10")
+
+    }
     
 }
