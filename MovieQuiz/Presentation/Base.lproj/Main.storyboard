@@ -112,17 +112,17 @@
                                 </subviews>
                             </stackView>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="ndq-wv-dgV">
-                                <rect key="frame" x="197" y="438" width="20" height="20"/>
+                                <rect key="frame" x="197" y="372" width="20" height="20"/>
                             </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" name="YP Black"/>
                         <constraints>
+                            <constraint firstItem="ndq-wv-dgV" firstAttribute="centerY" secondItem="IS2-3g-zP8" secondAttribute="centerY" id="7g2-pB-YtG"/>
                             <constraint firstItem="4hC-tO-cBr" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="B8E-SM-fsA"/>
                             <constraint firstItem="4hC-tO-cBr" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="Jrj-Cy-MN7"/>
-                            <constraint firstItem="ndq-wv-dgV" firstAttribute="leading" secondItem="IS2-3g-zP8" secondAttribute="trailing" constant="-197" id="dMf-W9-PRN"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="4hC-tO-cBr" secondAttribute="bottom" id="ffK-ra-uBj"/>
-                            <constraint firstItem="ndq-wv-dgV" firstAttribute="top" secondItem="IS2-3g-zP8" secondAttribute="bottom" constant="-224.5" id="kE0-Rl-3f8"/>
+                            <constraint firstItem="ndq-wv-dgV" firstAttribute="centerX" secondItem="IS2-3g-zP8" secondAttribute="centerX" id="vXE-9m-6CR"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="4hC-tO-cBr" secondAttribute="trailing" constant="20" id="zPf-2I-zZs"/>
                         </constraints>
                     </view>

@@ -31,7 +31,6 @@ class MovieQuizUITests: BaseClass {
         
         XCTAssertNotEqual(firstPosterData, secondPosterData)
         XCTAssertEqual(uiElements.indexLabel.label, "2/10")
-        
     }
     
     func testTextAlert() throws {
@@ -44,7 +43,6 @@ class MovieQuizUITests: BaseClass {
         XCTAssertTrue(uiElements.alert.exists)
         XCTAssertEqual(uiElements.alertTitle.label, "Этот раунд окончен!")
         XCTAssertEqual(uiElements.alertButton.label, "Сыграть ещё раз")
-        
     }
     
     func testAlertButtonPlayAgain() throws {
@@ -58,7 +56,5 @@ class MovieQuizUITests: BaseClass {
         _ = uiElements.indexLabel.waitForExistence(timeout: 3)
         XCTAssertFalse(uiElements.alert.exists)
         XCTAssertEqual(uiElements.indexLabel.label, "1/10")
-
     }
-    
 }

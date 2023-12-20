@@ -1,7 +1,21 @@
 import UIKit
 
+protocol MovieQuizViewControllerProtocol: AnyObject {
+    func show(quiz step: QuizStepViewModel)
+    func showAlert(quiz result: QuizResultsViewModel)
+    
+    func highlightImageBorder(isCorrectAnswer: Bool)
+    
+    func showLoadingIndicator()
+    func hideLoadingIndicator()
+    
+    func showNetworkError(message: String)
+    func toggleButton()
+    }
+
 final class MovieQuizViewController: UIViewController,
                                      MovieQuizViewControllerProtocol {
+    
     //MARK: - Outlets
     @IBOutlet private weak var noButton: UIButton!
     @IBOutlet private weak var yesButton: UIButton!
@@ -43,7 +57,7 @@ final class MovieQuizViewController: UIViewController,
     
     func show(quiz step: QuizStepViewModel) {
         textLabel.text = step.question
-        imageView.image = step.image
+        imageView.image = UIImage(data: step.image) ?? UIImage()
         counterLabel.text = step.questionNumber
         imageView.layer.borderWidth = .zero
     }
@@ -90,17 +104,7 @@ extension MovieQuizViewController {
         yesButton.isEnabled.toggle()
         noButton.isEnabled.toggle()
     }
+    
 }
 
-protocol MovieQuizViewControllerProtocol: AnyObject {
-    func show(quiz step: QuizStepViewModel)
-    func showAlert(quiz result: QuizResultsViewModel)
-    
-    func highlightImageBorder(isCorrectAnswer: Bool)
-    
-    func showLoadingIndicator()
-    func hideLoadingIndicator()
-    
-    func showNetworkError(message: String)
-    func toggleButton()
-}
+
